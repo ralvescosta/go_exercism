@@ -35,17 +35,15 @@ func Hey(remark string) string {
 	// Then remove all the stock comments.
 	// They're here to help you get started but they only clutter a finished solution.
 	// If you leave them in, reviewers may protest!
+	remark = strings.Trim(remark, " \t\n\r")
+	hasQuestionMark := len(remark) > 1 && remark[len(remark)-1] == '?'
+	isUpperCase := strings.ToUpper(remark) == remark && strings.ToLower(remark) != remark
 
-	hasQuestionMark := remark[len(remark)-1] == '?'
-	isUpperCase := strings.ToUpper(remark) == remark
-	hasNumber, hasLetter, hasDigit := verifyString(remark)
-	isNumberSequency := hasNumber && !hasLetter && hasDigit
-
-	if (isUpperCase && !isNumberSequency) && !hasQuestionMark {
+	if isUpperCase && !hasQuestionMark {
 		return "Whoa, chill out!"
 	}
 
-	if (isUpperCase && !isNumberSequency) && hasQuestionMark {
+	if isUpperCase && hasQuestionMark {
 		return "Calm down, I know what I'm doing!"
 	}
 
