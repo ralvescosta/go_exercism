@@ -7,27 +7,7 @@ package bob
 
 import (
 	"strings"
-	"unicode"
 )
-
-func verifyString(s string) (bool, bool, bool) {
-	hasNumber := false
-	hasLetter := false
-	hasDigit := false
-
-	for _, r := range s {
-		if unicode.IsNumber(r) {
-			hasNumber = true
-		}
-		if unicode.IsLetter(r) {
-			hasLetter = true
-		}
-		if unicode.IsDigit(r) {
-			hasDigit = true
-		}
-	}
-	return hasNumber, hasLetter, hasDigit
-}
 
 // Hey should have a comment documenting it.
 func Hey(remark string) string {
