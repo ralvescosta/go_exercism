@@ -1,7 +1,11 @@
 package main
 
-import "luhn"
+import (
+	"fmt"
+	"strconv"
+)
 
 func main() {
-	luhn.Valid("4895 65432")
+	_, err := strconv.Atoi("1")
+	fmt.Print(err)
 }
