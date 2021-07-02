@@ -6,15 +6,14 @@ import (
 )
 
 func Valid(s string) bool {
-	if len(s) <= 1 {
+	trim := strings.ReplaceAll(s, " ", "")
+	if len(trim) <= 1 {
 		return false
 	}
-
-	trim := strings.ReplaceAll(s, " ", "")
 	sum := 0
 	doubleIndex := len(trim) - 2
 
-	for i := len(trim) - 1; i > 0; i-- {
+	for i := len(trim) - 1; i >= 0; i-- {
 		b := trim[i]
 		toInt, err := strconv.Atoi(string(b))
 		if err != nil {
