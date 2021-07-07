@@ -16,67 +16,67 @@ var successTestCases = []struct {
 	input    []Record
 	expected *Node
 }{
-	{
-		name:     "empty input",
-		input:    []Record{},
-		expected: nil,
-	},
-	{
-		name: "one node",
-		input: []Record{
-			{ID: 0},
-		},
-		expected: &Node{
-			ID: 0,
-		},
-	},
-	{
-		name: "three nodes in order",
-		input: []Record{
-			{ID: 0},
-			{ID: 1, Parent: 0},
-			{ID: 2, Parent: 0},
-		},
-		expected: &Node{
-			ID: 0,
-			Children: []*Node{
-				{ID: 1},
-				{ID: 2},
-			},
-		},
-	},
-	{
-		name: "three nodes in reverse order",
-		input: []Record{
-			{ID: 2, Parent: 0},
-			{ID: 1, Parent: 0},
-			{ID: 0},
-		},
-		expected: &Node{
-			ID: 0,
-			Children: []*Node{
-				{ID: 1},
-				{ID: 2},
-			},
-		},
-	},
-	{
-		name: "more than two children",
-		input: []Record{
-			{ID: 3, Parent: 0},
-			{ID: 2, Parent: 0},
-			{ID: 1, Parent: 0},
-			{ID: 0},
-		},
-		expected: &Node{
-			ID: 0,
-			Children: []*Node{
-				{ID: 1},
-				{ID: 2},
-				{ID: 3},
-			},
-		},
-	},
+	// {
+	// 	name:     "empty input",
+	// 	input:    []Record{},
+	// 	expected: nil,
+	// },
+	// {
+	// 	name: "one node",
+	// 	input: []Record{
+	// 		{ID: 0},
+	// 	},
+	// 	expected: &Node{
+	// 		ID: 0,
+	// 	},
+	// },
+	// {
+	// 	name: "three nodes in order",
+	// 	input: []Record{
+	// 		{ID: 0},
+	// 		{ID: 1, Parent: 0},
+	// 		{ID: 2, Parent: 0},
+	// 	},
+	// 	expected: &Node{
+	// 		ID: 0,
+	// 		Children: []*Node{
+	// 			{ID: 1},
+	// 			{ID: 2},
+	// 		},
+	// 	},
+	// },
+	// {
+	// 	name: "three nodes in reverse order",
+	// 	input: []Record{
+	// 		{ID: 2, Parent: 0},
+	// 		{ID: 1, Parent: 0},
+	// 		{ID: 0},
+	// 	},
+	// 	expected: &Node{
+	// 		ID: 0,
+	// 		Children: []*Node{
+	// 			{ID: 1},
+	// 			{ID: 2},
+	// 		},
+	// 	},
+	// },
+	// {
+	// 	name: "more than two children",
+	// 	input: []Record{
+	// 		{ID: 3, Parent: 0},
+	// 		{ID: 2, Parent: 0},
+	// 		{ID: 1, Parent: 0},
+	// 		{ID: 0},
+	// 	},
+	// 	expected: &Node{
+	// 		ID: 0,
+	// 		Children: []*Node{
+	// 			{ID: 1},
+	// 			{ID: 2},
+	// 			{ID: 3},
+	// 		},
+	// 	},
+	// },
 	{
 		name: "binary tree",
 		input: []Record{
