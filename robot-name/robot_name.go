@@ -1,6 +1,7 @@
 package robotname
 
 import (
+	"errors"
 	"fmt"
 	"math/rand"
 )
@@ -22,6 +23,9 @@ func (r *Robot) Name() (string, error) {
 		r3 := rand.Intn(9)
 		s1 := randomString()
 		s2 := randomString()
+		if s1 == s2 {
+			return "", errors.New("duplicated string")
+		}
 		r.RobotName = fmt.Sprintf("%s%s%d%d%d", s1, s2, r1, r2, r3)
 	}
 
