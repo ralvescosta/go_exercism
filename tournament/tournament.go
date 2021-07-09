@@ -1,9 +1,67 @@
 package tournament
 
 import (
+	"errors"
 	"io"
 	"strings"
 )
+
+func Tally(reader io.Reader, writer io.Writer) error {
+	scoreboard := ScoreBoard{}
+	splitReader, err := readTournament(reader)
+	if err != nil {
+		return err
+	}
+
+	for _, readerSlice := range splitReader {
+		match, err := getMatch(readerSlice)
+		if err != nil {
+			continue
+		}
+		scoreboard.UpdateBoard(*match)
+	}
+
+	writer.Write([]byte(scoreboard.SprintF()))
+	return nil
+}
+
+func readTournament(reader io.Reader) ([]string, error) {
+	b := make([]byte, 1024)
+	if _, err := reader.Read(b); err != nil {
+		return []string{""}, err
+	}
+	readerToString := string(b)
+	return strings.Split(readerToString, "\n"), nil
+}
+
+func getMatch(readerSlice string) (*Match, error) {
+	if readerSlice == "" {
+		return nil, errors.New("")
+	}
+	splitSlice := strings.Split(readerSlice, ";")
+	if len(splitSlice) < 2 {
+		return nil, errors.New("")
+	}
+
+	matchResult := splitSlice[2]
+	m := Match{
+		Home:     strings.TrimSpace(splitSlice[0]),
+		Visiting: strings.TrimSpace(splitSlice[1]),
+		Winier:   "",
+		Loser:    "",
+	}
+
+	switch matchResult {
+	case "win":
+		m.Winier = m.Home
+		m.Loser = m.Visiting
+	case "loss":
+		m.Winier = m.Visiting
+		m.Loser = m.Home
+	}
+
+	return &m, nil
+}
 
 type Match struct {
 	Home     string
@@ -71,47 +129,4 @@ func (sb *ScoreBoard) UpdateBoard(match Match) {
 
 func (ScoreBoard) SprintF() string {
 	return ""
-}
-
-func Tally(reader io.Reader, writer io.Writer) error {
-	scoreboard := ScoreBoard{}
-
-	b := make([]byte, 1024)
-	if _, err := reader.Read(b); err != nil {
-		return err
-	}
-	readerToString := string(b)
-	splitReader := strings.Split(readerToString, "\n")
-
-	for _, readerSlice := range splitReader {
-		if readerSlice == "" {
-			continue
-		}
-		splitSlice := strings.Split(readerSlice, ";")
-		if len(splitSlice) < 2 {
-			continue
-		}
-
-		matchResult := splitSlice[2]
-		m := Match{
-			Home:     strings.TrimSpace(splitSlice[0]),
-			Visiting: strings.TrimSpace(splitSlice[1]),
-			Winier:   "",
-			Loser:    "",
-		}
-
-		switch matchResult {
-		case "win":
-			m.Winier = m.Home
-			m.Loser = m.Visiting
-		case "loss":
-			m.Winier = m.Visiting
-			m.Loser = m.Home
-		}
-
-		scoreboard.UpdateBoard(m)
-	}
-
-	writer.Write([]byte(scoreboard.SprintF()))
-	return nil
 }
