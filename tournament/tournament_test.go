@@ -20,27 +20,27 @@ var happyTestCases = []struct {
 	input       string
 	expected    string
 }{
-	{
-		description: "good",
-		input: `
-Allegoric Alaskians;Blithering Badgers;win
-Devastating Donkeys;Courageous Californians;draw
-Devastating Donkeys;Allegoric Alaskians;win
-Courageous Californians;Blithering Badgers;loss
-Blithering Badgers;Devastating Donkeys;loss
-Allegoric Alaskians;Courageous Californians;win
-`,
-		expected: `
-Team                           | MP |  W |  D |  L |  P
-Devastating Donkeys            |  3 |  2 |  1 |  0 |  7
-Allegoric Alaskians            |  3 |  2 |  0 |  1 |  6
-Blithering Badgers             |  3 |  1 |  0 |  2 |  3
-Courageous Californians        |  3 |  0 |  1 |  2 |  1
-`[1:], // [1:] = strip initial readability newline
-	},
 	// 	{
-	// 		description: "ignore comments and newlines",
+	// 		description: "good",
 	// 		input: `
+	// Allegoric Alaskians;Blithering Badgers;win
+	// Devastating Donkeys;Courageous Californians;draw
+	// Devastating Donkeys;Allegoric Alaskians;win
+	// Courageous Californians;Blithering Badgers;loss
+	// Blithering Badgers;Devastating Donkeys;loss
+	// Allegoric Alaskians;Courageous Californians;win
+	// `,
+	// 		expected: `
+	// Team                           | MP |  W |  D |  L |  P
+	// Devastating Donkeys            |  3 |  2 |  1 |  0 |  7
+	// Allegoric Alaskians            |  3 |  2 |  0 |  1 |  6
+	// Blithering Badgers             |  3 |  1 |  0 |  2 |  3
+	// Courageous Californians        |  3 |  0 |  1 |  2 |  1
+	// `[1:], // [1:] = strip initial readability newline
+	// 	},
+	// {
+	// 	description: "ignore comments and newlines",
+	// 	input: `
 
 	// Allegoric Alaskians;Blithering Badgers;win
 	// Devastating Donkeys;Allegoric Alaskians;win
@@ -52,31 +52,31 @@ Courageous Californians        |  3 |  0 |  1 |  2 |  1
 	// Devastating Donkeys;Courageous Californians;draw
 
 	// `,
-	// 		expected: `
+	// 	expected: `
 	// Team                           | MP |  W |  D |  L |  P
 	// Devastating Donkeys            |  3 |  2 |  1 |  0 |  7
 	// Allegoric Alaskians            |  3 |  2 |  0 |  1 |  6
 	// Blithering Badgers             |  3 |  1 |  0 |  2 |  3
 	// Courageous Californians        |  3 |  0 |  1 |  2 |  1
 	// `[1:],
-	// 	},
-	// 	{
-	// 		// A complete competition has all teams play eachother once or twice.
-	// 		description: "incomplete competition",
-	// 		input: `
-	// Allegoric Alaskians;Blithering Badgers;win
-	// Devastating Donkeys;Allegoric Alaskians;win
-	// Courageous Californians;Blithering Badgers;loss
-	// Allegoric Alaskians;Courageous Californians;win
-	// `,
-	// 		expected: `
-	// Team                           | MP |  W |  D |  L |  P
-	// Allegoric Alaskians            |  3 |  2 |  0 |  1 |  6
-	// Blithering Badgers             |  2 |  1 |  0 |  1 |  3
-	// Devastating Donkeys            |  1 |  1 |  0 |  0 |  3
-	// Courageous Californians        |  2 |  0 |  0 |  2 |  0
-	// `[1:],
-	// 	},
+	// },
+	{
+		// A complete competition has all teams play eachother once or twice.
+		description: "incomplete competition",
+		input: `
+	Allegoric Alaskians;Blithering Badgers;win
+	Devastating Donkeys;Allegoric Alaskians;win
+	Courageous Californians;Blithering Badgers;loss
+	Allegoric Alaskians;Courageous Californians;win
+	`,
+		expected: `
+	Team                           | MP |  W |  D |  L |  P
+	Allegoric Alaskians            |  3 |  2 |  0 |  1 |  6
+	Blithering Badgers             |  2 |  1 |  0 |  1 |  3
+	Devastating Donkeys            |  1 |  1 |  0 |  0 |  3
+	Courageous Californians        |  2 |  0 |  0 |  2 |  0
+	`[1:],
+	},
 	// 	{
 	// 		description: "tie for first and last place",
 	// 		input: `
