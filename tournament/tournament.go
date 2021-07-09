@@ -1,81 +1,117 @@
 package tournament
 
 import (
-	"fmt"
 	"io"
 	"strings"
 )
 
-var competitionResult = `
-Team                           | MP |  W |  D |  L |  P
-Devastating Donkeys            |  $00 |  $01 |  $02 |  $03 |  $04
-Allegoric Alaskians            |  $10 |  $11 |  $12 |  $13 |  $14
-Blithering Badgers             |  $20 |  $21 |  $22 |  $23 |  $24
-Courageous Californians        |  $30 |  $31 |  $32 |  $33 |  $34
-`
+type Match struct {
+	Home     string
+	Visiting string
+	Winier   string
+	Loser    string
+}
 
-var timePosition = map[string]int{
-	"Devastating Donkeys":     0,
-	"Allegoric Alaskians":     1,
-	"Blithering Badgers":      2,
-	"Courageous Californians": 3,
+type Score struct {
+	MP int
+	W  int
+	D  int
+	L  int
+	P  int
+}
+
+type ScoreBoard struct {
+	Board map[string]Score
+}
+
+func (sb *ScoreBoard) initializeScoreboard(m Match) {
+	if m.Winier == "" {
+		sb.Board = map[string]Score{
+			m.Home: {
+				MP: 1,
+				W:  0,
+				D:  1,
+				L:  0,
+				P:  1,
+			},
+			m.Visiting: {
+				MP: 1,
+				W:  0,
+				D:  1,
+				L:  0,
+				P:  1,
+			},
+		}
+	} else {
+		sb.Board = map[string]Score{
+			m.Winier: {
+				MP: 1,
+				W:  1,
+				D:  0,
+				L:  0,
+				P:  3,
+			},
+			m.Loser: {
+				MP: 1,
+				W:  0,
+				D:  0,
+				L:  1,
+				P:  0,
+			},
+		}
+	}
+}
+
+func (sb *ScoreBoard) UpdateBoard(match Match) {
+	if sb.Board == nil {
+		sb.initializeScoreboard(match)
+		return
+	}
+}
+
+func (ScoreBoard) SprintF() string {
+	return ""
 }
 
 func Tally(reader io.Reader, writer io.Writer) error {
-	matrix := make([][]int, 4)
+	scoreboard := ScoreBoard{}
+
 	b := make([]byte, 1024)
 	if _, err := reader.Read(b); err != nil {
 		return err
 	}
-	toString := string(b)
-	splitInput := strings.Split(toString, "\n")
+	readerToString := string(b)
+	splitReader := strings.Split(readerToString, "\n")
 
-	for _, v := range splitInput {
-		if v == "" {
+	for _, readerSlice := range splitReader {
+		if readerSlice == "" {
 			continue
 		}
-		splitSlice := strings.Split(v, ";")
+		splitSlice := strings.Split(readerSlice, ";")
 		if len(splitSlice) < 2 {
 			continue
 		}
-		splitSlice[0] = strings.TrimSpace(splitSlice[0])
-		splitSlice[1] = strings.TrimSpace(splitSlice[1])
 
-		winierTime := matrix[timePosition[splitSlice[0]]]
-		if winierTime == nil {
-			winierTime = make([]int, 5)
+		matchResult := splitSlice[2]
+		m := Match{
+			Home:     strings.TrimSpace(splitSlice[0]),
+			Visiting: strings.TrimSpace(splitSlice[1]),
+			Winier:   "",
+			Loser:    "",
 		}
-		loserTime := matrix[timePosition[splitSlice[1]]]
-		if loserTime == nil {
-			loserTime = make([]int, 5)
-		}
-		winierTime[0] += 1
-		loserTime[0] += 1
-		switch splitSlice[2] {
+
+		switch matchResult {
 		case "win":
-			winierTime[1] += 1
-			winierTime[4] += 3
-			loserTime[3] += 1
-		case "draw":
-			winierTime[2] += 1
-			winierTime[4] += 1
-			loserTime[2] += 1
-			loserTime[4] += 1
+			m.Winier = m.Home
+			m.Loser = m.Visiting
 		case "loss":
-			winierTime[3] += 1
-			loserTime[1] += 1
-			loserTime[4] += 3
+			m.Winier = m.Visiting
+			m.Loser = m.Home
 		}
-		matrix[timePosition[splitSlice[0]]] = winierTime
-		matrix[timePosition[splitSlice[1]]] = loserTime
+
+		scoreboard.UpdateBoard(m)
 	}
 
-	for i, m := range matrix {
-		for j, d := range m {
-			competitionResult = strings.ReplaceAll(competitionResult, fmt.Sprintf("$%d%d", i, j), fmt.Sprintf("%d", d))
-		}
-	}
-	fmt.Println(competitionResult)
-	writer.Write([]byte(competitionResult[1:]))
+	writer.Write([]byte(scoreboard.SprintF()))
 	return nil
 }
