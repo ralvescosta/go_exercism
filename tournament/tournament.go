@@ -2,66 +2,38 @@ package tournament
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"sort"
 	"strings"
 )
 
-type TeamScore struct {
-	Name          string
-	MatchesPlayed int
-	Wins          int
-	Losses        int
-	Draws         int
-	Points        int
-}
-
-type SortTeam []*TeamScore
-
-func (a SortTeam) Len() int      { return len(a) }
-func (a SortTeam) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
-func (a SortTeam) Less(i, j int) bool {
-	if a[i].Points < a[j].Points {
-		return false
-	} else if a[i].Points > a[j].Points {
-		return true
-	} else {
-		return a[i].Name < a[j].Name
-	}
-}
-
 func Tally(reader io.Reader, writer io.Writer) error {
-	var buffer bytes.Buffer
-	buffer.ReadFrom(reader)
-	input := buffer.String()
-	input = strings.Trim(input, "\n")
-	rows := strings.Split(input, "\n")
-	teamMap := make(map[string]*TeamScore)
-	var teamList SortTeam
+	rows := read(reader)
+	hashMap := make(map[string]*TeamScore)
+	var board Scoreboard
 
 	for i, row := range rows {
-		// Skip blank lines and comments
 		if len(strings.Trim(row, " ")) == 0 || row[0] == '#' {
 			continue
 		}
-		record := strings.Split(row, ";")
-		if len(record) != 3 || record[0] == record[1] {
-			return fmt.Errorf("wrong number of parts on line %d", i)
+		match, err := parseMatch(row)
+		if err != nil {
+			return err
 		}
-		name1, name2 := record[0], record[1]
-		if _, ok := teamMap[name1]; !ok {
-			teamMap[name1] = &TeamScore{name1, 0, 0, 0, 0, 0}
-			teamList = append(teamList, teamMap[name1])
+		if _, ok := hashMap[match.HomeTeam]; !ok {
+			hashMap[match.HomeTeam] = &TeamScore{match.HomeTeam, 0, 0, 0, 0, 0}
+			board = append(board, hashMap[match.HomeTeam])
 		}
-		if _, ok := teamMap[name2]; !ok {
-			teamMap[name2] = &TeamScore{name2, 0, 0, 0, 0, 0}
-			teamList = append(teamList, teamMap[name2])
+		if _, ok := hashMap[match.VisitingTeam]; !ok {
+			hashMap[match.VisitingTeam] = &TeamScore{match.VisitingTeam, 0, 0, 0, 0, 0}
+			board = append(board, hashMap[match.VisitingTeam])
 		}
-		team1, team2 := teamMap[name1], teamMap[name2]
+		team1, team2 := hashMap[match.HomeTeam], hashMap[match.VisitingTeam]
 		team1.MatchesPlayed += 1
 		team2.MatchesPlayed += 1
-		switch result := record[2]; result {
+		switch match.Result {
 		case "win":
 			team1.Wins += 1
 			team1.Points += 3
@@ -76,13 +48,13 @@ func Tally(reader io.Reader, writer io.Writer) error {
 			team1.Points += 1
 			team2.Points += 1
 		default:
-			return fmt.Errorf("invalid match result \"%s\" in line %d", result, i)
+			return fmt.Errorf("invalid match result \"%s\" in line %d", match.Result, i)
 		}
 	}
 
-	sort.Sort(teamList)
+	sort.Sort(board)
 	writer.Write([]byte("Team                           | MP |  W |  D |  L |  P\n"))
-	for _, team := range teamList {
+	for _, team := range board {
 		fmt.Fprintf(writer, "%-31s| %2d | %2d | %2d | %2d | %2d\n",
 			team.Name,
 			team.MatchesPlayed,
@@ -93,4 +65,54 @@ func Tally(reader io.Reader, writer io.Writer) error {
 	}
 
 	return nil
+}
+
+type TeamScore struct {
+	Name          string
+	MatchesPlayed int
+	Wins          int
+	Losses        int
+	Draws         int
+	Points        int
+}
+
+type Match struct {
+	HomeTeam     string
+	VisitingTeam string
+	Result       string
+}
+
+type Scoreboard []*TeamScore
+
+func (a Scoreboard) Len() int      { return len(a) }
+func (a Scoreboard) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a Scoreboard) Less(i, j int) bool {
+	if a[i].Points < a[j].Points {
+		return false
+	} else if a[i].Points > a[j].Points {
+		return true
+	} else {
+		return a[i].Name < a[j].Name
+	}
+}
+
+func read(reader io.Reader) []string {
+	var buffer bytes.Buffer
+	buffer.ReadFrom(reader)
+	input := buffer.String()
+	input = strings.Trim(input, "\n")
+	return strings.Split(input, "\n")
+}
+
+func parseMatch(match string) (Match, error) {
+	record := strings.Split(match, ";")
+	if len(record) != 3 || record[0] == record[1] {
+		return Match{}, errors.New("wrong number of parts on line")
+	}
+
+	return Match{
+		HomeTeam:     record[0],
+		VisitingTeam: record[1],
+		Result:       record[2],
+	}, nil
 }
