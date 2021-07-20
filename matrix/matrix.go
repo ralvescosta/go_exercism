@@ -7,11 +7,25 @@ import (
 
 type Matrix struct {
 	in string
-	m  [][]int
 }
 
-func (Matrix) Rows() [][]int {
-	return make([][]int, 1)
+func (mtx Matrix) Rows() [][]int {
+	rows := strings.Split(mtx.in, "\n")
+	rowCount := 1
+	matrix := [][]int{}
+
+	for _, row := range rows {
+		if len(matrix) < rowCount {
+			matrix = append(matrix, []int{})
+		}
+		columns := strings.Split(row, " ")
+		for _, column := range columns {
+			cv, _ := strconv.Atoi(column)
+			matrix[rowCount-1] = append(matrix[rowCount-1], cv)
+		}
+		rowCount++
+	}
+	return matrix
 }
 func (Matrix) Cols() [][]int {
 	return make([][]int, 1)
@@ -21,19 +35,5 @@ func (Matrix) Set(r, c, v int) bool {
 }
 
 func New(input string) (*Matrix, error) {
-	rows := strings.Split(input, "\n")
-	rowCount := 0
-	matrix := [][]int{}
-
-	for _, row := range rows {
-		columns := strings.Split(row, " ")
-
-		for columnIndex, column := range columns {
-			cv, _ := strconv.Atoi(column)
-			matrix[rowCount][columnIndex] = cv
-		}
-		rowCount++
-	}
-
-	return &Matrix{in: input, m: matrix}, nil
+	return &Matrix{in: input}, nil
 }
