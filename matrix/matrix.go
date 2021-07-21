@@ -10,25 +10,36 @@ type Matrix struct {
 }
 
 func (mtx Matrix) Rows() [][]int {
-	rows := strings.Split(mtx.in, "\n")
-	rowCount := 1
-	matrix := [][]int{}
+	rowsString := strings.Split(mtx.in, "\n")
+	rows := [][]int{}
 
-	for _, row := range rows {
-		if len(matrix) < rowCount {
-			matrix = append(matrix, []int{})
+	for rowIndex, row := range rowsString {
+		if len(rows) < rowIndex+1 {
+			rows = append(rows, []int{})
 		}
 		columns := strings.Split(row, " ")
 		for _, column := range columns {
 			cv, _ := strconv.Atoi(column)
-			matrix[rowCount-1] = append(matrix[rowCount-1], cv)
+			rows[rowIndex] = append(rows[rowIndex], cv)
 		}
-		rowCount++
 	}
-	return matrix
+	return rows
 }
-func (Matrix) Cols() [][]int {
-	return make([][]int, 1)
+func (mtx Matrix) Cols() [][]int {
+	rowsString := strings.Split(mtx.in, "\n")
+	cols := [][]int{}
+
+	for _, row := range rowsString {
+		columns := strings.Split(row, " ")
+		for columnIndex, column := range columns {
+			if len(cols) < columnIndex+1 {
+				cols = append(cols, []int{})
+			}
+			cv, _ := strconv.Atoi(column)
+			cols[columnIndex] = append(cols[columnIndex], cv)
+		}
+	}
+	return cols
 }
 func (Matrix) Set(r, c, v int) bool {
 	return true
