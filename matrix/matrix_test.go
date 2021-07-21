@@ -35,109 +35,109 @@ var tests = []struct {
 			{2, 20},
 		},
 	},
-	// {"9 7\n8 6",
-	// 	true,
-	// 	[][]int{
-	// 		{9, 7},
-	// 		{8, 6},
-	// 	},
-	// 	[][]int{
-	// 		{9, 8},
-	// 		{7, 6},
-	// 	},
-	// },
-	// {"9 8 7\n19 18 17",
-	// 	true,
-	// 	[][]int{
-	// 		{9, 8, 7},
-	// 		{19, 18, 17},
-	// 	},
-	// 	[][]int{
-	// 		{9, 19},
-	// 		{8, 18},
-	// 		{7, 17},
-	// 	},
-	// },
-	// {"1 4 9\n16 25 36",
-	// 	true,
-	// 	[][]int{
-	// 		{1, 4, 9},
-	// 		{16, 25, 36},
-	// 	},
-	// 	[][]int{
-	// 		{1, 16},
-	// 		{4, 25},
-	// 		{9, 36},
-	// 	},
-	// },
-	// {"1 2 3\n4 5 6\n7 8 9\n 8 7 6",
-	// 	true,
-	// 	[][]int{
-	// 		{1, 2, 3},
-	// 		{4, 5, 6},
-	// 		{7, 8, 9},
-	// 		{8, 7, 6},
-	// 	},
-	// 	[][]int{
-	// 		{1, 4, 7, 8},
-	// 		{2, 5, 8, 7},
-	// 		{3, 6, 9, 6},
-	// 	},
-	// },
-	// {"89 1903 3\n18 3 1\n9 4 800",
-	// 	true,
-	// 	[][]int{
-	// 		{89, 1903, 3},
-	// 		{18, 3, 1},
-	// 		{9, 4, 800},
-	// 	},
-	// 	[][]int{
-	// 		{89, 18, 9},
-	// 		{1903, 3, 4},
-	// 		{3, 1, 800},
-	// 	},
-	// },
-	// {"1 2 3", // valid, 1 row, 3 columns
-	// 	true,
-	// 	[][]int{
-	// 		{1, 2, 3},
-	// 	},
-	// 	[][]int{
-	// 		{1},
-	// 		{2},
-	// 		{3},
-	// 	},
-	// },
-	// {"1\n2\n3", // valid, 3 rows, 1 column
-	// 	true,
-	// 	[][]int{
-	// 		{1},
-	// 		{2},
-	// 		{3},
-	// 	},
-	// 	[][]int{
-	// 		{1, 2, 3},
-	// 	},
-	// },
-	// {"0", // valid, 1 row, 1 column
-	// 	true,
-	// 	[][]int{
-	// 		{0},
-	// 	},
-	// 	[][]int{
-	// 		{0},
-	// 	},
-	// },
-	// {"9223372036854775808", false, nil, nil}, // overflows int64
-	// {"1 2\n10 20 30", false, nil, nil},       // uneven rows
-	// {"\n3 4\n5 6", false, nil, nil},          // first row empty
-	// {"1 2\n\n5 6", false, nil, nil},          // middle row empty
-	// {"1 2\n3 4\n", false, nil, nil},          // last row empty
-	// {"2.7", false, nil, nil},                 // non-int
-	// {"cat", false, nil, nil},                 // non-numeric
-	// // undefined
-	// // {"\n\n", // valid?, 3 rows, 0 columns
-	// // {"",     // valid?, 0 rows, 0 columns
+	{"9 7\n8 6",
+		true,
+		[][]int{
+			{9, 7},
+			{8, 6},
+		},
+		[][]int{
+			{9, 8},
+			{7, 6},
+		},
+	},
+	{"9 8 7\n19 18 17",
+		true,
+		[][]int{
+			{9, 8, 7},
+			{19, 18, 17},
+		},
+		[][]int{
+			{9, 19},
+			{8, 18},
+			{7, 17},
+		},
+	},
+	{"1 4 9\n16 25 36",
+		true,
+		[][]int{
+			{1, 4, 9},
+			{16, 25, 36},
+		},
+		[][]int{
+			{1, 16},
+			{4, 25},
+			{9, 36},
+		},
+	},
+	{"1 2 3\n4 5 6\n7 8 9\n 8 7 6",
+		true,
+		[][]int{
+			{1, 2, 3},
+			{4, 5, 6},
+			{7, 8, 9},
+			{8, 7, 6},
+		},
+		[][]int{
+			{1, 4, 7, 8},
+			{2, 5, 8, 7},
+			{3, 6, 9, 6},
+		},
+	},
+	{"89 1903 3\n18 3 1\n9 4 800",
+		true,
+		[][]int{
+			{89, 1903, 3},
+			{18, 3, 1},
+			{9, 4, 800},
+		},
+		[][]int{
+			{89, 18, 9},
+			{1903, 3, 4},
+			{3, 1, 800},
+		},
+	},
+	{"1 2 3", // valid, 1 row, 3 columns
+		true,
+		[][]int{
+			{1, 2, 3},
+		},
+		[][]int{
+			{1},
+			{2},
+			{3},
+		},
+	},
+	{"1\n2\n3", // valid, 3 rows, 1 column
+		true,
+		[][]int{
+			{1},
+			{2},
+			{3},
+		},
+		[][]int{
+			{1, 2, 3},
+		},
+	},
+	{"0", // valid, 1 row, 1 column
+		true,
+		[][]int{
+			{0},
+		},
+		[][]int{
+			{0},
+		},
+	},
+	{"9223372036854775808", false, nil, nil}, // overflows int64
+	{"1 2\n10 20 30", false, nil, nil},       // uneven rows
+	{"\n3 4\n5 6", false, nil, nil},          // first row empty
+	{"1 2\n\n5 6", false, nil, nil},          // middle row empty
+	{"1 2\n3 4\n", false, nil, nil},          // last row empty
+	{"2.7", false, nil, nil},                 // non-int
+	{"cat", false, nil, nil},                 // non-numeric
+	// undefined
+	// {"\n\n", // valid?, 3 rows, 0 columns
+	// {"",     // valid?, 0 rows, 0 columns
 }
 
 func TestNew(t *testing.T) {
@@ -262,6 +262,20 @@ func TestSet(t *testing.T) {
 				t.Fatalf("Matrix(%q).Set(%d, %d, 0) = ok, want !ok", s, r, c)
 			}
 		}
+	}
+}
+
+func BenchmarkNew(b *testing.B) {
+	var matrix Matrix
+	for i := 0; i < b.N; i++ {
+		var err error
+		matrix, err = New("1 2 3 10 11\n4 5 6 11 12\n7 8 9 12 13\n 8 7 6 13 14")
+		if err != nil {
+			b.Fatalf("Failed to create the matrix: %v", err)
+		}
+	}
+	if matrix == nil {
+		b.Fatalf("No matrix parsed")
 	}
 }
 

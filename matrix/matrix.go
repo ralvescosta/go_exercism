@@ -6,72 +6,72 @@ import (
 	"strings"
 )
 
-type Matrix struct {
-	in string
-}
+type Matrix [][]int
 
-func (mtx Matrix) Rows() [][]int {
-	rowsString := strings.Split(mtx.in, "\n")
-	rows := [][]int{}
-
-	for rowIndex, row := range rowsString {
-		if len(rows) < rowIndex+1 {
-			rows = append(rows, []int{})
+func New(s string) (Matrix, error) {
+	var matrix Matrix
+	for _, r := range strings.Split(s, "\n") {
+		var row []int
+		r = strings.TrimSpace(r)
+		for _, c := range strings.Split(r, " ") {
+			val, err := strconv.Atoi(c)
+			if err != nil {
+				return nil, fmt.Errorf("convert string to int: %v", err)
+			}
+			row = append(row, val)
 		}
-		columns := strings.Split(row, " ")
-		for _, column := range columns {
-			cv, _ := strconv.Atoi(column)
-			rows[rowIndex] = append(rows[rowIndex], cv)
-		}
+		matrix = append(matrix, row)
 	}
 
+	if err := matrix.validate(); err != nil {
+		return nil, fmt.Errorf("matrix is not valid: %v", err)
+	}
+
+	return matrix, nil
+}
+
+func (m Matrix) validate() error {
+	if len(m) == 0 {
+		return fmt.Errorf("empty input")
+	}
+	sLen := len(m[0])
+	for _, row := range m {
+		if len(row) != sLen {
+			return fmt.Errorf("rows of different length are not allowed")
+		}
+	}
+	return nil
+}
+
+func (m Matrix) Rows() [][]int {
+	rows := make([][]int, len(m))
+	for i, row := range m {
+		rows[i] = make([]int, len(row))
+		copy(rows[i], row)
+	}
 	return rows
 }
-func (mtx Matrix) Cols() [][]int {
-	rowsString := strings.Split(mtx.in, "\n")
-	cols := [][]int{}
 
-	for _, row := range rowsString {
-		columns := strings.Split(row, " ")
-		for columnIndex, column := range columns {
-			if len(cols) < columnIndex+1 {
-				cols = append(cols, []int{})
-			}
-			cv, _ := strconv.Atoi(column)
-			cols[columnIndex] = append(cols[columnIndex], cv)
+func (m Matrix) Cols() [][]int {
+	cols := make([][]int, len(m[0]))
+	for i := range cols {
+		cols[i] = make([]int, len(m))
+	}
+	for i, row := range m {
+		for j, cell := range row {
+			cols[j][i] = cell
 		}
 	}
-
 	return cols
 }
 
-func (Matrix) toString(mtx [][]int) string {
-	mtxString := ""
-	for _, row := range mtx {
-		for _, colum := range row {
-			mtxString += fmt.Sprintf(" %d", colum)
-		}
-		mtxString = mtxString[1:]
-	}
-
-	return mtxString
-}
-
-func (mtx *Matrix) Set(row, col, value int) bool {
-	rows := mtx.Rows()
-
-	if len(rows) < row-1 {
+func (m Matrix) Set(row, column, value int) bool {
+	if row >= len(m) || row < 0 {
 		return false
 	}
-	if len(rows) < row {
-		rows = append(rows, []int{})
+	if column >= len(m[0]) || column < 0 {
+		return false
 	}
-
-	rows[row][col] = value
-	mtx.in = mtx.toString(rows)
+	m[row][column] = value
 	return true
-}
-
-func New(input string) (*Matrix, error) {
-	return &Matrix{in: input}, nil
 }
