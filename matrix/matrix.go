@@ -1,6 +1,7 @@
 package matrix
 
 import (
+	"fmt"
 	"strconv"
 	"strings"
 )
@@ -23,6 +24,7 @@ func (mtx Matrix) Rows() [][]int {
 			rows[rowIndex] = append(rows[rowIndex], cv)
 		}
 	}
+
 	return rows
 }
 func (mtx Matrix) Cols() [][]int {
@@ -39,9 +41,34 @@ func (mtx Matrix) Cols() [][]int {
 			cols[columnIndex] = append(cols[columnIndex], cv)
 		}
 	}
+
 	return cols
 }
-func (Matrix) Set(r, c, v int) bool {
+
+func (Matrix) toString(mtx [][]int) string {
+	mtxString := ""
+	for _, row := range mtx {
+		for _, colum := range row {
+			mtxString += fmt.Sprintf(" %d", colum)
+		}
+		mtxString = mtxString[1:]
+	}
+
+	return mtxString
+}
+
+func (mtx *Matrix) Set(row, col, value int) bool {
+	rows := mtx.Rows()
+
+	if len(rows) < row-1 {
+		return false
+	}
+	if len(rows) < row {
+		rows = append(rows, []int{})
+	}
+
+	rows[row][col] = value
+	mtx.in = mtx.toString(rows)
 	return true
 }
 
