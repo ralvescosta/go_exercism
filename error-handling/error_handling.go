@@ -1,13 +1,27 @@
 package erratum
 
-func Use(F ResourceOpener, input string) error {
-	resource, err := F()
-	defer resource.Close()
-	if err != nil {
+import "log"
+
+func Use(opener ResourceOpener, input string) error {
+	r, err := opener()
+	defer func() {
+		if err := recover(); err != nil {
+			log.Println("panic occurred: ", err)
+		} else {
+			r.Close()
+		}
+	}()
+
+	switch err.(type) {
+	case *TransientError:
+		Use(opener, input)
+	case nil:
+		break
+	default:
 		return err
 	}
 
-	resource.Frob(input)
-	resource.Defrob(input)
+	r.Frob(input)
+	r.Defrob(input)
 	return nil
 }
