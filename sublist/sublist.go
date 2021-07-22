@@ -3,72 +3,58 @@ package sublist
 type Relation string
 
 func Sublist(a, b []int) Relation {
-	r := "sublist"
-	aLen := len(a)
-	bLen := len(b)
-
-	if aLen == bLen {
-		r = "equal"
-		for i, number := range a {
-			if number != b[i] {
-				return Relation("unequal")
-			}
-		}
+	isASublist := verifyWhichIsSublist(a, b)
+	isBSuperlist := verifyWhichIsSublist(b, a)
+	if isASublist && isBSuperlist {
+		return "equal"
+	} else if isASublist {
+		return "sublist"
+	} else if isBSuperlist {
+		return "superlist"
+	} else {
+		return "unequal"
 	}
-
-	if aLen > bLen {
-		if bLen == 0 {
-			return Relation("superlist")
-		}
-		initialIndex := findIndex(a, b[0])
-		if initialIndex == -1 {
-			return Relation("unequal")
-		}
-		finalIndex := findIndex(a, b[len(b)-1])
-		if finalIndex == -1 {
-			return Relation("unequal")
-		}
-		aSlice := a[initialIndex:finalIndex]
-		r = "superlist"
-		for index, number := range aSlice {
-			if number != b[index] {
-				r = "unequal"
-				break
-			}
-		}
-	}
-
-	if bLen > aLen {
-		if aLen == 0 {
-			return Relation("sublist")
-		}
-
-		initialIndex := findIndex(b, a[0])
-		if initialIndex == -1 {
-			return Relation("unequal")
-		}
-		finalIndex := findIndex(b, a[len(a)-1])
-		if finalIndex == -1 {
-			return Relation("unequal")
-		}
-		bSlice := b[initialIndex : finalIndex+1]
-		r = "sublist"
-		for index, number := range bSlice {
-			if number != a[index] {
-				r = "unequal"
-				break
-			}
-		}
-	}
-
-	return Relation(r)
 }
 
-func findIndex(slice []int, search int) int {
-	for i := len(slice) - 1; i > 0; i-- {
-		if slice[i] == search {
-			return i
-		}
+func verifyWhichIsSublist(a, b []int) bool {
+	if len(b) < len(a) {
+		return false
+	} else if len(a) == 0 {
+		return true
 	}
-	return -1
+
+	index1 := 0
+	index2 := 0
+	cursor2 := 0
+	match := false
+	for index1 < len(a) {
+		v1 := a[index1]
+		if index2 == len(b) && index1 < len(a) {
+			match = false
+			break
+		}
+
+		for index2 < len(b) {
+			v2 := b[index2]
+			if v1 == v2 {
+				index1++
+				index2++
+				match = true
+				break
+			} else if match {
+				index1 = 0
+				cursor2++
+				index2 = cursor2
+				break
+			} else {
+				index2++
+			}
+		}
+
+		if !match {
+			break
+		}
+
+	}
+	return match
 }
